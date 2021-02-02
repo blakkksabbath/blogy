@@ -423,6 +423,8 @@ pre code { font-size: 15px !important; }
 
 /*-----------------------------------*/
 /*----- ADD YOUR STYLES BELOW -------*/
+body { background-color: white; }
+
 .post-content p, .post-content li { font-size: 120%; color: #515151; }
 
 .language-python + .language-plaintext { border-left: 1px solid grey; margin-left: 1rem !important; }
