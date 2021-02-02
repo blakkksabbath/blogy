@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Understanding Generative Adversarial Networks | Jithendra’s blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Understanding Generative Adversarial Networks" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="When you create something out of nothing, it is the most thrilling thing — Frankie Knuckles, American DJ" />
+<meta property="og:description" content="When you create something out of nothing, it is the most thrilling thing — Frankie Knuckles, American DJ" />
+<link rel="canonical" href="https://jbsy.github.io/blog/deeplearning/2020/07/11/Understanding-Generative-Adversarial-Networks.html" />
+<meta property="og:url" content="https://jbsy.github.io/blog/deeplearning/2020/07/11/Understanding-Generative-Adversarial-Networks.html" />
+<meta property="og:site_name" content="Jithendra’s blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-11T00:00:00-05:00" />
+<script type="application/ld+json">
+{"url":"https://jbsy.github.io/blog/deeplearning/2020/07/11/Understanding-Generative-Adversarial-Networks.html","@type":"BlogPosting","headline":"Understanding Generative Adversarial Networks","dateModified":"2020-07-11T00:00:00-05:00","datePublished":"2020-07-11T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://jbsy.github.io/blog/deeplearning/2020/07/11/Understanding-Generative-Adversarial-Networks.html"},"description":"When you create something out of nothing, it is the most thrilling thing — Frankie Knuckles, American DJ","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://jbsy.github.io/blog/feed.xml" title="Jithendra's blog" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Jithendra&#39;s blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Understanding Generative Adversarial Networks</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-11T00:00:00-05:00" itemprop="datePublished">
+        Jul 11, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      13 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/blog/categories/#deeplearning">deeplearning</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#what-is-a-generative-model">What is a Generative model?</a></li>
+<li class="toc-entry toc-h2"><a href="#types-of-generative-models">Types of Generative models:</a></li>
+<li class="toc-entry toc-h2"><a href="#explicit-density-models">Explicit density models</a></li>
+<li class="toc-entry toc-h2"><a href="#implicit-density-models">Implicit density models</a></li>
+<li class="toc-entry toc-h2"><a href="#understanding-a-gan">Understanding a GAN</a></li>
+<li class="toc-entry toc-h2"><a href="#the-gan-architecture">The GAN architecture:</a></li>
+<li class="toc-entry toc-h2"><a href="#training-a-gan">Training a GAN:</a></li>
+<li class="toc-entry toc-h2"><a href="#implementing-a-gan">Implementing a GAN</a></li>
+<li class="toc-entry toc-h2"><a href="#dataset">Dataset</a></li>
+<li class="toc-entry toc-h2"><a href="#discriminator">Discriminator</a></li>
+<li class="toc-entry toc-h2"><a href="#generator">Generator</a></li>
+<li class="toc-entry toc-h2"><a href="#optimization">Optimization</a></li>
+<li class="toc-entry toc-h2"><a href="#training">Training:</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#discriminator-loss-function">Discriminator loss function:</a></li>
+<li class="toc-entry toc-h3"><a href="#generator-loss-function">Generator loss function:</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#training-loop">Training loop:</a></li>
+</ul><blockquote>
+  <p>When you create something out of nothing, it is the most thrilling thing  — Frankie Knuckles, American DJ</p>
+</blockquote>
+
+<p>Generative Adversarial Networks are exactly the same thrilling thing. They create some new data out of nothing, following the rules 
+ established by existing data. This ability to generate information out of nothing makes GANs look like a bit magical. And the results 
+ that are generated are very promising. Yann LeCun — one of the most prominent researchers in deep learning described it as “ the most 
+ interesting idea in the last 10 years in Machine Learning”. And indeed GANs have had a huge success and thousands of research papers 
+ were published in the recent years.</p>
+
+<p><img src="https://cdn-images-1.medium.com/max/800/0*92IUCObT8N1VmX8H.jpeg"></p>
+
+<p>The main motto of GAN is to generate some information from scratch. But their potential is very huge. Just to give you the idea of their potential, I am mentioning some of the coolest projects created with GANs that you should definitely check out:</p>
+
+<p><a href="https://arxiv.org/pdf/1703.10593.pdf">
+  <img src="https://camo.githubusercontent.com/2296236e17ff15eb5a077fdb62df498b9d000a19/68747470733a2f2f6a756e79616e7a2e6769746875622e696f2f4379636c6547414e2f696d616765732f7061696e74696e673270686f746f2e6a7067">
+</a></p>
+
+<p><a href="https://github.com/junyanz/CycleGAN">
+  <img src="https://cdn-images-1.medium.com/max/800/1*dWd0lVTbnu80UZM641gCbw.gif">
+</a></p>
+
+<p><a href="https://arxiv.org/pdf/1708.05509.pdf">
+  <img src="https://cdn-images-1.medium.com/max/800/1*3LAQZe4j1Bz-lk9PyQUlnw.png">
+</a></p>
+
+<p>So what are Generative Adversarial Networks? What is so magical about them? In this blog post we’ll explore GANs and detailed explanation of how GANs work. But before diving into GANs, we will start by describing what are Generative models.</p>
+
+<h2 id="what-is-a-generative-model">
+<a class="anchor" href="#what-is-a-generative-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is a Generative model?</h2>
+
+<p>To understand what a generative model is, contrasting it with a discriminative model is helpful. Discriminative model discriminates between different kinds of data instances whereas a Generative model generates a new data instance. Given the features of a data instance, discriminative model predicts a category to which that data belongs whereas a generative model do the opposite. Instead of predicting a label based on features, a generative model predicts features based on labels. It cares about the distribution of the training data. A Generative Model is a unsupervised learning method that learns any kind of data distribution and it has achieved huge success in the past few years.</p>
+
+<h2 id="types-of-generative-models">
+<a class="anchor" href="#types-of-generative-models" aria-hidden="true"><span class="octicon octicon-link"></span></a>Types of Generative models:</h2>
+
+<p><a href="https://arxiv.org/pdf/1701.00160.pdf">
+  <img src="https://cdn-images-1.medium.com/max/800/1*H-WBtWA7QBGKjek3bRQKDQ.png">
+</a></p>
+
+<p>Generative models are of two types — explicit density models and implicit density models. The main difference between them is that explicit models use an explicit density function whereas the implicit models use a stochastic procedure that can directly generate data.</p>
+
+<h2 id="explicit-density-models">
+<a class="anchor" href="#explicit-density-models" aria-hidden="true"><span class="octicon octicon-link"></span></a>Explicit density models</h2>
+
+<p>Explicit density models are again divided into <strong>Tractable density</strong> and <strong>Approximate density</strong> models. In general, tractable distribution means it takes polynomial-time to capture probability of its distribution at any given point. Pixel RNN is the most commonly used tractable density model. They are highly effective but they follow sequential generation, which is very slow.</p>
+
+<p>But most of the distributions are complex and it is very difficult to capture the distribution in polynomial time. Such models are considered as <strong>Approximate models</strong>. These are again divided into two categories: models using <em>variational methods</em> and models using <em>Monte Carlo methods</em>. Variational methods use deterministic approximations and are used in complex models with unknown parameters. Variational Autoencoder (VAE) is one of the most popular generative models and is based on variational learning. <em>Boltzmann machines</em> are another kind of generative models that rely on Markov chains. They use stochastic approximations instead of deterministic approach. Boltzmann machines played an important part in deep learning research but now they are very rarely used because Markov chains inflict very high computational costs.</p>
+
+<h2 id="implicit-density-models">
+<a class="anchor" href="#implicit-density-models" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implicit density models</h2>
+
+<p>These can be trained without explicitly defining a density function. There are some implicit models too which rely on Markov chains like <em>Generative Stochastic Network</em> (GSN) but as we already discussed that Markov chains inflict high computational costs, they fail in many cases. <em>Generative Adversarial Networks</em> were designed to avoid most of these disadvantages associated with other generative models. GANs have become so popular because they are proven to be really successful in modeling and generating high dimensional data.</p>
+
+<p>Enough of this background knowledge. Though it is a very captivating field to explore and discuss, I’ll try to leave the in-depth explanation later in another post, we are here for GANs! Now without wasting any further time, let’s understand how do GANs work !!!</p>
+
+<h2 id="understanding-a-gan">
+<a class="anchor" href="#understanding-a-gan" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understanding a GAN</h2>
+
+<p>The <em>end goal of a generative model is to predict features given a label</em>, instead of predicting a label given features. They try to learn the model to generate the input distribution as realistic as possible. So the main focus here is to design an architecture of a network that takes a simple N dimensional uniform random variable as input and returns another N dimensional random variable that should somehow follow the probability distribution of input sample as output. Now we need to optimize the network through training. In general, the generated random distribution is directly compared to the input sample and use back propagation to lower the distance between true and generated samples.</p>
+
+<p>Ian Goodfellow and his colleagues came up with a brilliant idea in the 2014 paper titled “<a href="https://arxiv.org/pdf/1406.2661.pdf">Generative Adversarial Nets</a>”. They proposed a new framework in which two neural networks compete with each other for estimating generative models. In the following sections we will understand the training process and the math behind GANs.</p>
+
+<h2 id="the-gan-architecture">
+<a class="anchor" href="#the-gan-architecture" aria-hidden="true"><span class="octicon octicon-link"></span></a>The GAN architecture:</h2>
+
+<p><img src="https://miro.medium.com/max/700/0*0pDWOCkB_2i97G4-.png"></p>
+
+<p>A generative neural network is composed of two models: the <strong>Generator</strong> which generates data from some random uniform distribution and the <strong>Discriminator</strong> which identifies the fake data from the real data . The output of generator(fake data) is connected to the discriminator input.</p>
+
+<p>The simplest way to understand the architecture is — a generator network trained to generate samples as realistic as possible via adversarial training by introducing a discriminator network, which plays a role of detecting whether the given sample is real or fake. The generator should learn to fool the discriminator into believing that the input sent by generator is real. While the discriminator tries not to get fooled by generator identifying that the data generated is fake. These two models improves their knowledge by competing with each other, until generator wins in fooling the discriminator.</p>
+
+<p>Since we got an overview of GAN architecture, we will now understand how these models compete with each other technically!</p>
+
+<h2 id="training-a-gan">
+<a class="anchor" href="#training-a-gan" aria-hidden="true"><span class="octicon octicon-link"></span></a>Training a GAN:</h2>
+
+<p>We define a neural network <strong>G(z, θg)</strong> that maps random noise variables <em>z</em> to some data <em>x</em>. We also define another neural network <strong>D(x, θd)</strong> that outputs a single scalar <em>D(x)</em> that represents the probability that the input came from the real dataset. θg and θd represents parameters that define respective neural networks. The generator and the discriminator have two separate training processes.</p>
+
+<p>The <em>discriminator</em> is simply a classifier. We can use any architecture for the discriminator that is appropriate to the type of data we are using. The discriminator is trained in such a way that it classifies the input data as either real or fake. So the parameters (θd) of the discriminator are updated in order to minimize the probability that any fake data sample G(z) is classified as a real one and also to maximize the probability any real data sample x is classified as belonging to the real dataset. In order words, the loss function of <strong>discriminator minimizes D(G(z)) and maximizes D(x). Minimizing log(D(G(z))) is same as maximizing log(1-D(G(z)))</strong>. So the objective for the discriminator becomes:</p>
+
+<p><img src="/blog/images/posts/2020-7-11/disobj.png" alt=""></p>
+
+<p>The <em>generator</em> learns to make the discriminator classify the data generated as real through feedback from the discriminator. The parameters (θg) of the generator are updated in order to maximize the probability that any fake data sample is classified as a real one. So the loss function of generator <strong>maximizes D(G(z))</strong>.</p>
+
+<p><img src="/blog/images/posts/2020-7-11/genobj.png" alt=""></p>
+
+<p>As Ian Goodfellow said, it is essentially two-player minimax game played by generator(G) and discriminator(D). The value function V(G, D) is given by:</p>
+
+<p><img src="/blog/images/posts/2020-7-11/minmax.png" alt=""></p>
+
+<p>where —</p>
+
+<p>D(x) : probability that the real data instance x is real</p>
+
+<p>G(z) : generator’s output for noise z</p>
+
+<p>D(G(z)) : probability that the generated instance is real</p>
+
+<p>1-D(G(z)) : probability that the generated instance is fake</p>
+
+<p>A <strong>gradient-based optimization</strong> algorithm can be used to train the GAN since both the models are neural networks. We perform <strong>back propagation</strong> which allows the discriminator and generator to improve over time. Based on the classification done by the discriminator we will either have positive or negative feedback in the form of loss gradients. We keep the parameters of generator constant and train the discriminator during which it has to learn how to slap the generator’s flaws. Then we switch the models. We keep the parameters of the discriminator constant and train the generator.</p>
+
+<p>In this way, we train both the networks alternatively and the networks will <strong>compete with each other</strong> to improve themselves. Eventually the generator generates realistic data and the <strong>discriminator will be unable to find the difference between the real data sample and the generated data sample</strong>.</p>
+
+<p>I am adding a screenshot from the paper which explains the algorithm on how to train a GAN using stochastic gradient descent.</p>
+
+<p><img src="/blog/images/posts/2020-7-11/algo.png" alt="" title="https://arxiv.org/pdf/1406.2661.pdf"></p>
+
+<p>The training steps for a GAN can be described like this:</p>
+<ul>
+  <li>From a random distribution we take some noise and send it to the generator G which produces some generated fake data.</li>
+  <li>Along with the generated data, we also send the sample of real data to the discriminator D.</li>
+  <li>The discriminator calculates the loss for both the real and fake data samples and the generator also calculates the loss from the noise.</li>
+  <li>The two calculated losses are back propagated to their respective networks and the networks learn to improve from these losses.</li>
+  <li>Apply optimization algorithm like gradient descent and Repeat the whole process.</li>
+</ul>
+
+<blockquote>
+  <p>“Talk is cheap, Show me the code” — Linus Torvalds</p>
+</blockquote>
+
+<p>Okay, We’ll now implement a GAN to understand this better.</p>
+
+<h2 id="implementing-a-gan">
+<a class="anchor" href="#implementing-a-gan" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implementing a GAN</h2>
+
+<p>We are going to implement a GAN using PyTorch. We’ll start by creating a notebook and importing the following dependencies.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="n">opt</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="n">nn</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="n">F</span>
+<span class="kn">import</span> <span class="nn">torchvision</span>
+<span class="kn">import</span> <span class="nn">torchvision.transforms</span> <span class="k">as</span> <span class="n">transforms</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+</code></pre></div></div>
+
+<h2 id="dataset">
+<a class="anchor" href="#dataset" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dataset</h2>
+
+<p>The Dataset we will be using is the classic MNIST dataset created by LeCunn. The dataset consists of 60,000 images of handwritten digits, each with size 28x28</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="p">.</span><span class="n">ToTensor</span><span class="p">()</span>
+<span class="c1"># load data
+</span><span class="n">trainData</span> <span class="o">=</span> <span class="n">torchvision</span><span class="p">.</span><span class="n">datasets</span><span class="p">.</span><span class="n">MNIST</span><span class="p">(</span><span class="s">'./data/'</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="c1"># creating a loader with data - which helps to iterate over the data
+</span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="n">trainLoader</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">utils</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">trainData</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
+</code></pre></div></div>
+
+<p><img src="/blog/images/posts/2020-7-11/orisam.png" alt=""></p>
+
+<h2 id="discriminator">
+<a class="anchor" href="#discriminator" aria-hidden="true"><span class="octicon octicon-link"></span></a>Discriminator</h2>
+
+<p>This network will take an image as its input and return the probability of it belonging to the real dataset or the generated dataset. The input size for each image will be <code class="language-plaintext highlighter-rouge">28x28=784</code> . The architecture we are going to implement will have three Fully-connected layers, each followed by ReLU non-linearity layer. Since the output should be the probability of the image that says whether it is real or fake, the value should be between (0,1). For this purpose, a Sigmoid function is added to the real-valued output in the last layer.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Discriminator</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">X_dim</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="mi">128</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Sigmoid</span><span class="p">()</span>
+        <span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="generator">
+<a class="anchor" href="#generator" aria-hidden="true"><span class="octicon octicon-link"></span></a>Generator</h2>
+
+<p>The Generator network will take a random noise vector as input and returns a vector of size 784, which resembles a <code class="language-plaintext highlighter-rouge">28x28</code> image. The last layer will have Tanh activation to clip the image to be <code class="language-plaintext highlighter-rouge">[-1,1]</code> — which is same size as the preprocessed MNIST images are bounded.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Generator</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">n_features</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="n">X_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Tanh</span><span class="p">()</span>
+        <span class="p">)</span>
+          
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+</code></pre></div></div>
+<h2 id="optimization">
+<a class="anchor" href="#optimization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Optimization</h2>
+
+<p>We’ll use Adam as the optimization algorithm with the learning rate 2e-4 which is not necessarily the optimal value, but selected after various tests.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">g_opt</span> <span class="o">=</span> <span class="n">opt</span><span class="p">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">G</span><span class="p">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">2e-4</span><span class="p">)</span>
+<span class="n">d_opt</span> <span class="o">=</span> <span class="n">opt</span><span class="p">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">D</span><span class="p">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">2e-4</span><span class="p">)</span>
+</code></pre></div></div>
+<h2 id="training">
+<a class="anchor" href="#training" aria-hidden="true"><span class="octicon octicon-link"></span></a>Training:</h2>
+
+<p>In the above section, we’ve already seen the steps that must be followed to train a GAN. First, we need to calculate losses of both generator and discriminator networks and then back-propagate them.</p>
+
+<h3 id="discriminator-loss-function">
+<a class="anchor" href="#discriminator-loss-function" aria-hidden="true"><span class="octicon octicon-link"></span></a>Discriminator loss function:</h3>
+
+<p><img src="/blog/images/posts/2020-7-11/dloss.png" alt=""></p>
+
+<h3 id="generator-loss-function">
+<a class="anchor" href="#generator-loss-function" aria-hidden="true"><span class="octicon octicon-link"></span></a>Generator loss function:</h3>
+
+<p><img src="/blog/images/posts/2020-7-11/gloss.png" alt=""></p>
+
+<p>We will be using Binary Cross Entropy Loss or log loss because it resembles both the generator and the discriminator losses.</p>
+
+<p><img src="/blog/images/posts/2020-7-11/bce.png" alt=""></p>
+
+<p>For training <em>discriminator</em>, if we replace ŷi with D(x) and yi = 1 we will get the real image loss and if we replace ŷi with D(G(z)) and yi = 0 we will get fake image loss. We will add this together to get the total discriminator loss.</p>
+
+<p>For training <em>generator</em>, we need to minimize log(1 - D(G(z))) which is same as maximizing log(D(G(z))). If we replace ŷi with D(G(z)) and yi = 1, we will get the loss to be maximized. But the problem with most of the frameworks like PyTorch is — they minimize the functions. Since, BCE-loss definition has a minus-sign, this won’t cause us any problem.</p>
+
+<p>We will also create the real-image targets as ones, and the fake-image targets as zeros with shape (batch_size, 1). These will be help us in calculating the losses of generator and discriminator.</p>
+
+<h2 id="training-loop">
+<a class="anchor" href="#training-loop" aria-hidden="true"><span class="octicon octicon-link"></span></a>Training loop:</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+    <span class="n">G_loss_update</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">D_loss_update</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">trainLoader</span><span class="p">):</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">view</span><span class="p">(</span><span class="n">X</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="c1"># tensor containing ones representing real data target
+</span>        <span class="n">real_target</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">ones</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># tensor containing zeroes representing generated data target
+</span>        <span class="n">generated_target</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        
+        <span class="n">z</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">n_features</span><span class="p">)</span>
+        
+        <span class="c1"># 1. Train discriminator
+</span>        <span class="c1"># on real data
+</span>        <span class="n">D_real</span> <span class="o">=</span> <span class="n">D</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="c1"># calculating real data error
+</span>        <span class="n">D_real_loss</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="n">binary_cross_entropy</span><span class="p">(</span><span class="n">D_real</span><span class="p">,</span> <span class="n">real_target</span><span class="p">)</span>
+        
+        <span class="c1"># on generated data
+</span>        <span class="n">D_generated</span> <span class="o">=</span> <span class="n">D</span><span class="p">(</span><span class="n">G</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+        <span class="c1"># calculating generated data error
+</span>        <span class="n">D_generated_loss</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="n">binary_cross_entropy</span><span class="p">(</span><span class="n">D_generated</span><span class="p">,</span> <span class="n">generated_target</span><span class="p">)</span>
+        
+        <span class="c1"># Total discriminator loss
+</span>        <span class="n">D_loss</span> <span class="o">=</span> <span class="n">D_real_loss</span> <span class="o">+</span> <span class="n">D_generated_loss</span>
+        
+        <span class="c1"># reset gradients
+</span>        <span class="n">d_opt</span><span class="p">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="c1"># backpropagate
+</span>        <span class="n">D_loss</span><span class="p">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="c1"># update weights with gradients
+</span>        <span class="n">d_opt</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>
+        
+        <span class="c1"># 2. Train generator
+</span>        <span class="c1"># sample noise and generate some fake data
+</span>        <span class="n">z</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">n_features</span><span class="p">)</span>
+        <span class="n">D_generated</span> <span class="o">=</span> <span class="n">D</span><span class="p">(</span><span class="n">G</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+        <span class="c1"># calculating error
+</span>        <span class="n">G_loss</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="n">binary_cross_entropy</span><span class="p">(</span><span class="n">D_generated</span><span class="p">,</span> <span class="n">real_target</span><span class="p">)</span>
+        
+        <span class="c1"># resetting gradients, backpropagating and updating weights
+</span>        <span class="n">g_opt</span><span class="p">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">G_loss</span><span class="p">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">g_opt</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>
+        
+        <span class="n">G_loss_update</span> <span class="o">=</span> <span class="n">G_loss_update</span> <span class="o">+</span> <span class="n">G_loss</span><span class="p">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">D_loss_update</span> <span class="o">=</span> <span class="n">D_loss_update</span> <span class="o">+</span> <span class="n">D_loss</span><span class="p">.</span><span class="n">item</span><span class="p">()</span>
+        
+    <span class="k">print</span><span class="p">(</span><span class="s">'Epoch:{}, G_loss:{}, D_loss:{}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">G_loss_update</span><span class="o">/</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">D_loss_update</span><span class="o">/</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+    
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">G</span><span class="p">(</span><span class="n">z</span><span class="p">).</span><span class="n">detach</span><span class="p">()</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span><span class="p">.</span><span class="n">view</span><span class="p">(</span><span class="n">samples</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">).</span><span class="n">cpu</span><span class="p">()</span>
+    <span class="n">imshow</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>We have successfully implemented a GAN. Now, let’s look at the results -</p>
+
+<p>Before training:</p>
+
+<p><img src="/blog/images/posts/2020-7-11/init.png" alt=""></p>
+
+<p>During training at 10th epoch:</p>
+
+<p><img src="/blog/images/posts/2020-7-11/mid.png" alt=""></p>
+
+<p>Finally:</p>
+
+<p><img src="/blog/images/posts/2020-7-11/fin.png" alt=""></p>
+
+<p>You can check out the complete implementation and run it online — <a href="https://www.kaggle.com/saiyan6174/implementing-a-gan">kaggle notebook</a></p>
+
+<hr>
+
+<p>References:</p>
+
+<p>[1] Goodfellow, Ian, et al. “<a href="https://arxiv.org/pdf/1406.2661.pdf">Generative Adversarial Networks</a>” NIPS, 2014.</p>
+
+<p>[2] Uddin, S. M. Nadim. (2019). <a href="https://www.researchgate.net/publication/332157589_Intuitive_Approach_to_Understand_the_Mathematics_Behind_GAN">Intuitive Approach to Understand the Mathematics Behind GAN</a>. 10.13140/RG.2.2.12650.36805.</p>
+
+<p>[3] Ian Goodfellow’s <a href="https://www.youtube.com/watch?v=HGYYEUSm-0Q&amp;t=2s">NIPS 2016 tutorial</a> on YouTube.</p>
+
+
+  </div><a class="u-url" href="/blog/deeplearning/2020/07/11/Understanding-Generative-Adversarial-Networks.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>A place where I scribble down my thoughts and notes for my future self to look back and review the material.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/jithendrabsy" title="jithendrabsy"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/jithendrabsy" title="jithendrabsy"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/jithendrabsy" title="jithendrabsy"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

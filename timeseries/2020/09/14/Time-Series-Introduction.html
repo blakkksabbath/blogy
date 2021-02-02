@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Time Series  for beginners | Jithendra’s blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Time Series  for beginners" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="If you are walking the path of becoming a data scientist, you might have already come across the term Time Series and you might have also realized the importance of Time Series Analysis and Forecating. In this post, I will try to give a gentle introduction so that it can kickstart your learning." />
+<meta property="og:description" content="If you are walking the path of becoming a data scientist, you might have already come across the term Time Series and you might have also realized the importance of Time Series Analysis and Forecating. In this post, I will try to give a gentle introduction so that it can kickstart your learning." />
+<link rel="canonical" href="https://jbsy.github.io/blog/timeseries/2020/09/14/Time-Series-Introduction.html" />
+<meta property="og:url" content="https://jbsy.github.io/blog/timeseries/2020/09/14/Time-Series-Introduction.html" />
+<meta property="og:site_name" content="Jithendra’s blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-09-14T00:00:00-05:00" />
+<script type="application/ld+json">
+{"url":"https://jbsy.github.io/blog/timeseries/2020/09/14/Time-Series-Introduction.html","@type":"BlogPosting","headline":"Time Series  for beginners","dateModified":"2020-09-14T00:00:00-05:00","datePublished":"2020-09-14T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://jbsy.github.io/blog/timeseries/2020/09/14/Time-Series-Introduction.html"},"description":"If you are walking the path of becoming a data scientist, you might have already come across the term Time Series and you might have also realized the importance of Time Series Analysis and Forecating. In this post, I will try to give a gentle introduction so that it can kickstart your learning.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://jbsy.github.io/blog/feed.xml" title="Jithendra's blog" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Jithendra&#39;s blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Time Series  for beginners</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-09-14T00:00:00-05:00" itemprop="datePublished">
+        Sep 14, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      7 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/blog/categories/#timeseries">timeseries</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#what-is-timeseries">What is Time series?</a></li>
+<li class="toc-entry toc-h2"><a href="#univariate-vs-multivariate-timeseries">Univariate vs Multivariate time series</a></li>
+<li class="toc-entry toc-h2"><a href="#time-seriesanalysis">Time Series Analysis</a></li>
+<li class="toc-entry toc-h2"><a href="#time-series-forecasting">Time Series Forecasting</a></li>
+<li class="toc-entry toc-h2"><a href="#stationarity-in-timeseries">Stationarity in Time Series</a></li>
+<li class="toc-entry toc-h2"><a href="#time-series-decomposition">Time Series Decomposition</a></li>
+<li class="toc-entry toc-h2"><a href="#basic-steps-for-forecasting">Basic steps for Forecasting</a></li>
+<li class="toc-entry toc-h2"><a href="#applications-of-time-series-forecasting">Applications of Time Series Forecasting</a></li>
+<li class="toc-entry toc-h2"><a href="#conclusion">Conclusion</a></li>
+</ul><p>If you are walking the path of becoming a data scientist, you might have already come across the term Time Series and you might have also realized the importance of Time Series Analysis and Forecating. In this post, I will try to give a gentle introduction so that it can kickstart your learning.</p>
+
+<p><img src="/blog/images/posts/2020-9-14/tss.png" alt="" title="time-series-plot"></p>
+
+<h2 id="what-is-timeseries">
+<a class="anchor" href="#what-is-timeseries" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is Time series?</h2>
+
+<p>As the name suggests, <strong>time series</strong> is just a series of observations collected over different points in time. There exists a correlation between the observations collected at adjacent time points, therefore the previous observations of a variable can be used in predicting the same variable. This distinguishes time series data from general machine learning data where the observtions are collected at a single point in time.</p>
+
+<p>The data collected over time represents a time series only if the observations are dependent on time. If the data collected is purely random in nature, forecating the future values is not possible and such data is called <strong>white noise</strong>. </p>
+
+<h2 id="univariate-vs-multivariate-timeseries">
+<a class="anchor" href="#univariate-vs-multivariate-timeseries" aria-hidden="true"><span class="octicon octicon-link"></span></a>Univariate vs Multivariate time series</h2>
+<p>If only a single variable is varying over time, it is called <strong>Univariate time series</strong>. For example, temperature of a room measured every hour. Here there are no other variables recorded, hence predicting temperature only depends on the temperature values recorded at previous time points.</p>
+
+<p>If there are more than one variable varying over time, it is called <strong>Multivariate time series</strong>. For example, if the humidity is recorded along with the temperature then both temperature and humidity are to be considered in order to predict the temperature.</p>
+
+<p><strong>Note</strong>: Predecting the future is not the only goal of time series data. We can have different goals while working with time series. These goals can be mainly categorized into analysis and forecasting.</p>
+
+<h2 id="time-seriesanalysis">
+<a class="anchor" href="#time-seriesanalysis" aria-hidden="true"><span class="octicon octicon-link"></span></a>Time Series Analysis</h2>
+<p>The main goal of time series analysis is exctracting useful statistics from data in order to understand the nature and underlying causes of the past. It helps to describe available data and provide interpretation to understand the problem domain better. Time series analyis can help to make better predictions.</p>
+
+<h2 id="time-series-forecasting">
+<a class="anchor" href="#time-series-forecasting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Time Series Forecasting</h2>
+<p>The main goal of forecasting is to build models on the past data and use them to predict future observations. For example, predicting number of births in a country based on the data collected in past years. This is challenging as the future observations are unavailable and must be predicted from what has already happened in the past.</p>
+
+<h2 id="stationarity-in-timeseries">
+<a class="anchor" href="#stationarity-in-timeseries" aria-hidden="true"><span class="octicon octicon-link"></span></a>Stationarity in Time Series</h2>
+<p>If all the statistical characteristics of data like mean, auto correlation, variance do not vary with time then the time series is called stationary. But in general, most of the data recorded in not stationary i.e. the properties vary with time.</p>
+
+<p>Analyzing such time series helps to understand the patterns such as trend, seasonality,cyclicality and irregularity. <strong>Trend</strong> is a general direction the data is changing as time passes. <strong>Seasonality</strong> is when a pattern recurs over fixed regular time intervals. <strong>Cyclicality</strong> is when there are any fluctuations around the trend. Unlike seasonality, cyclicality may vary in length. <strong>Irregularity</strong> is when there are random fluctuations which are not systematic and are irregular. These fluctuations cannot be controlled. These are called as time series components.</p>
+
+<p><img src="/blog/images/posts/2020-9-14/comps.jpg" alt="" title="Time series components(https://slideplayer.com/slide/8134442/)"></p>
+
+<p>Most of the forecasting methods assume that the data is stationary because it is easy to predict the stationary data. Therfore, it is important to convert non-stationary data to stationary in order to apply forecasting models.</p>
+
+<p>Check out <a href="https://medium.com/data-science-in-your-pocket/why-time-series-has-to-be-stationary-37ca8800ddf">this</a> post by <a href="https://medium.com/@mehulgupta_7991">Mehul Gupta</a> which explains Why time series has to be stationary more clearly.</p>
+
+<p>It is important to analyze these components carefully in order to better understand the problem during analysis or forecasting. Since it is difficult to see all the components in a time series, a method called <strong>Decomposition</strong> can be used to identify them. These components can either combine in an <em>additive</em> way or in a <em>multiplicative</em> way.</p>
+
+<p>An <strong>Additive time series</strong> is when the fluctuations in the data do not vary over time. Additive model is linear and seasonality has same frequency although the time increases.</p>
+
+<blockquote>
+  <p>Time series  = trend + seasonality + cyclicality + irreguarity</p>
+</blockquote>
+
+<p>A <strong>Multiplicative time series</strong> is when the variations or the fluctuations in the data increases as the time increases. Multiplicative model is non-linear and seasonality has either increasing or decreasing frequency.</p>
+<blockquote>
+  <p>Time series = trend * seasonality * cyclicality * irregularity</p>
+</blockquote>
+
+<h2 id="time-series-decomposition">
+<a class="anchor" href="#time-series-decomposition" aria-hidden="true"><span class="octicon octicon-link"></span></a>Time Series Decomposition</h2>
+<p>The purpose of decomposition is to identify and seperate components from a time series in order to perform better analysis and forecasting.</p>
+
+<p>In general, the cyclical component is hard to seperate and it is left by grouping it with the trend component, to form a trend-cycle component. It is often simply referred to as the trend component, even though it may contain cyclical behavior.</p>
+
+<p>Classical decomposition can be either a multiplicative or an additive decomposition. A function called <a href="https://www.statsmodels.org/dev/generated/statsmodels.tsa.seasonal.seasonal_decompose.html">seasonal_decompose()</a> can be used to perform classical decomposition. You need to mention whether the model is additive or multiplicative.</p>
+
+<p>Below is an example which shows decomposition of a dataset into components including the original data, trend, seasonality and irregularity(residual).</p>
+
+<p>Let’s first load the dataset and plot a simple graph:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">'births.csv'</span><span class="p">)</span>
+<span class="n">df</span><span class="p">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+<p><img src="/blog/images/posts/2020-9-14/plot.png" alt="" title="data source(https://rb.gy/ehaaxw)"></p>
+
+<p>Since the variations are very complex, we cannot see all the components clearly. Now, Decomposing this will give us clear picture of the components. Let’s look how we can decompose this using <strong>seasonal_decompose()</strong> function:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">statsmodels.tsa.seasonal</span> <span class="kn">import</span> <span class="n">seasonal_decompose</span>
+<span class="n">components</span> <span class="o">=</span> <span class="n">seasonal_decompose</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">'births'</span><span class="p">],</span> <span class="n">model</span><span class="o">=</span><span class="s">'multiplicative'</span><span class="p">,</span><span class="n">period</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">components</span><span class="p">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">pyplot</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+<p><img src="/blog/images/posts/2020-9-14/dec.png" alt=""></p>
+
+<p>Now you can see all the components, you can analyze them and remove any of them them if not needed. For example, if you want to analyze the trend of a stock data, you would need to remove the seasonality found in the data and the noise due to irregularity.</p>
+
+<p>Let’s look into the basic steps to be followed while performing a forecasting task -</p>
+
+<h2 id="basic-steps-for-forecasting">
+<a class="anchor" href="#basic-steps-for-forecasting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic steps for Forecasting</h2>
+
+<ol>
+  <li>
+<strong>Defining the problem</strong>: Understanding the problem domain and clearly knowing the end goal of the forecast. The most important skill needed for a data scientist is being able to explain why a prediction is made and present results in a proper way. This is possible only with having a clear knowledge of who needs the forecast, why and how it will be used.</li>
+  <li>
+<strong>Data Collection</strong>: Collecting the past data related to the problem domain, gathering other important information from domain experts.</li>
+  <li>
+<strong>Data preperation</strong>: This includes exploring the data to know components like trend or seasonality, cleaning the data to fill the missing values and remove outliers if any, basic feature engineering to understand the relation ship between features or to add any new features, resampling and data transforms to remove noise and improve the forecasting.</li>
+  <li>
+<strong>Modeling</strong>: This includes configuring the right forecast model for the data. Widely used time series models are Auto Regressive(<strong>AR</strong>) models, Moving Average(<strong>MA</strong>) models, Intergrated(<strong>I</strong>) models and the combination of these models like Auto Regressive Moving Average models(<strong>ARMA</strong>), Auto Regressive Integrated Moving Average models(<strong>ARIMA</strong>). It is better to try models of different types, from simple to advanced approaches.</li>
+  <li>
+<strong>Evaluation</strong>: The time series forecasting model can only be trusted through its performance at predicting the future. This may include testing the model on previous data by creating train-test splits and calculating error or wait for the new observations to occur to compare the predictions.</li>
+</ol>
+
+<h2 id="applications-of-time-series-forecasting">
+<a class="anchor" href="#applications-of-time-series-forecasting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Applications of Time Series Forecasting</h2>
+<ul>
+  <li>Forecasting of agricultural commodity price</li>
+  <li>Stock market analysis and forecasting</li>
+  <li>Sales forecasting</li>
+  <li>Forecasting supply chain components</li>
+  <li>Weather forecasting</li>
+  <li>Forecasting the birth rate in a country</li>
+</ul>
+
+<p>any many more …..</p>
+
+<h2 id="conclusion">
+<a class="anchor" href="#conclusion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h2>
+
+<p>This is a basic introduction to time series for beginners. In this post, I’ve explained</p>
+<ul>
+  <li>What a time series is and why they are important.</li>
+  <li>Components in a time series data.</li>
+  <li>Decomposition of time series into it’s components.</li>
+  <li>Basic steps to be followed while performing a forecasting task.</li>
+</ul>
+
+<p><em>The data for plotting the graphs in this post is taken from <a href="https://raw.githubusercontent.com/jbrownlee/Datasets/master/daily-total-female-births.csv">here</a>.</em></p>
+
+<hr>
+<p>Thanks for reading! Please feel free to reach me via <a href="https://twitter.com/jithendrabsy">twitter</a>.</p>
+
+  </div><a class="u-url" href="/blog/timeseries/2020/09/14/Time-Series-Introduction.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>A place where I scribble down my thoughts and notes for my future self to look back and review the material.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/jithendrabsy" title="jithendrabsy"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/jithendrabsy" title="jithendrabsy"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/jithendrabsy" title="jithendrabsy"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
