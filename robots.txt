@@ -1,1 +1,1 @@
-Sitemap: https://jithendray.github.io/blog/sitemap.xml
+Sitemap: https://jithendray.github.io/blogy/sitemap.xml
