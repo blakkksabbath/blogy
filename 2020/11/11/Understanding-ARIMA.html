@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Breaking down - ARIMA | Jithendra’s blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Breaking down - ARIMA" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In a lot of machine learning problems the thing we want to predict is dependent on very clear inputs, such as properties of the target, pixels of an image, etc. In time series these indepent variables are often not known or does not exist." />
+<meta property="og:description" content="In a lot of machine learning problems the thing we want to predict is dependent on very clear inputs, such as properties of the target, pixels of an image, etc. In time series these indepent variables are often not known or does not exist." />
+<link rel="canonical" href="https://jithendray.github.io/blog/2020/11/11/Understanding-ARIMA.html" />
+<meta property="og:url" content="https://jithendray.github.io/blog/2020/11/11/Understanding-ARIMA.html" />
+<meta property="og:site_name" content="Jithendra’s blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-11-11T00:00:00-06:00" />
+<script type="application/ld+json">
+{"url":"https://jithendray.github.io/blog/2020/11/11/Understanding-ARIMA.html","@type":"BlogPosting","headline":"Breaking down - ARIMA","dateModified":"2020-11-11T00:00:00-06:00","datePublished":"2020-11-11T00:00:00-06:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://jithendray.github.io/blog/2020/11/11/Understanding-ARIMA.html"},"description":"In a lot of machine learning problems the thing we want to predict is dependent on very clear inputs, such as properties of the target, pixels of an image, etc. In time series these indepent variables are often not known or does not exist.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://jithendray.github.io/blog/feed.xml" title="Jithendra's blog" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Jithendra&#39;s blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Breaking down - ARIMA</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-11-11T00:00:00-06:00" itemprop="datePublished">
+        Nov 11, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      7 min read
+    
+</span></p>
+
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#ar-auto-regressive-model">AR: Auto Regressive model</a></li>
+<li class="toc-entry toc-h2"><a href="#ma-moving-average-model">MA: Moving Average model</a></li>
+<li class="toc-entry toc-h2"><a href="#estimating-the-armapq-model-hyperparameters">Estimating the ARMA(p,q) model hyperparameters</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#autocorrelation">Autocorrelation</a></li>
+<li class="toc-entry toc-h3"><a href="#partial-autocorrelation">Partial Autocorrelation</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#characteristics-of-acf-and-pacf">Characteristics of ACF and PACF</a></li>
+<li class="toc-entry toc-h2"><a href="#stationarity">Stationarity</a></li>
+<li class="toc-entry toc-h2"><a href="#integrated-i">Integrated (I)</a></li>
+<li class="toc-entry toc-h2"><a href="#seasonality">Seasonality</a></li>
+<li class="toc-entry toc-h2"><a href="#further-reading">Further Reading</a></li>
+<li class="toc-entry toc-h2"><a href="#credits">Credits</a></li>
+</ul><p>In a lot of machine learning problems the thing we want to predict is dependent on very clear inputs, such as properties of the target, pixels of an image, etc. In time series these indepent variables are often not known or does not exist.</p>
+
+<p>For example, in predicting the demand of fresh vegetable products from a market, we don’t have a clear independent set of variables where we can fit a model on. 
+A market collects vegetables from various farmers of different places. Is demand of a vegtable product dependent on the properties of a farm it was grown in, 
+or the temperature at that place or the height and weight of the farmer? No, the demand of a vegetable does not depend on the farm or the farmer. The independent data is not easily available or even 
+if we can try to find a relationship between such independent variables and the vegetable demand, these relationships are not perfect and clear.</p>
+
+<p>The <strong>time series analysis</strong> is frequently used in such cases. The fundamental intuition behind time series forecasting is that, the measure of some variable 
+at a time period will depend on the measure of the same variable at previous time periods. Therefore, we analyze the series on the series itself.</p>
+
+<p><img src="/blog/images/posts/2020-11-11/i.jpeg" alt=""></p>
+
+<p>One of the most used models when handling time series are ARIMA models. ARIMA stands for Autoregressive Integrated Moving Average. 
+I will walk through all the parts of ARIMA to fully explain them.</p>
+
+<h2 id="ar-auto-regressive-model">
+<a class="anchor" href="#ar-auto-regressive-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>AR: Auto Regressive model</h2>
+<p>Auto Regressive (AR) model is a specific type of regression model where, the dependent variable depends on past values of itself.</p>
+
+<p>For example, consider a stock price data. The stock price of today is influenced by yesterday’s price. If the price(close price) of day t-1 is x dollars, the price of day t starts with x dollars. We can assume the price can be determined by the following model:</p>
+
+<p><i>Y<sub>t</sub> = μ + ϕY<sub>t-1</sub> + ϵ<sub>t</sub></i></p>
+
+<p>where μ  and ϕ are constants, and ϵ<sub>t</sub> is white noise.</p>
+
+<p>This model is called AR model, and generally AR(p) is given by the following definition:</p>
+
+<p><i>Y<sub>t</sub> = μ + ϵ<sub>t</sub> + ϕ<sub>1</sub>Y<sub>t-1</sub> + ϕ<sub>2</sub>Y<sub>t-2</sub> + …+ ϕ<sub>p</sub>Y<sub>t-p</sub></i></p>
+
+<h2 id="ma-moving-average-model">
+<a class="anchor" href="#ma-moving-average-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>MA: Moving Average model</h2>
+<p>Moving Average (MA) model works by analysing how wrong you were in predicting values for the previous time-periods to make a better estimate for the current time-period. This model factors in errors from the observations.</p>
+
+<p>Generally MA(q) is given by the following definition:</p>
+
+<p><i>Y<sub>t</sub> = μ + ϵ<sub>t</sub> + θ<sub>1</sub> ϵ<sub>t-1</sub> + θ<sub>2</sub> ϵ<sub>t-2</sub>  + …+ θ<sub>q</sub> ϵ<sub>t-q</sub></i></p>
+
+<p>MA model complements the AR model by taking the errors from the previous time-periods  into considerations, to get better forecast results.</p>
+
+<p>The combined model between AR and MA is called ARMA model, and it is defined as AR(p,q). It is given as follows:</p>
+
+<p><i>Y<sub>t</sub> = μ + ϵ<sub>t</sub> + ϕ<sub>1</sub>Y<sub>t-1</sub> + …+ ϕ<sub>p</sub>Y<sub>t-p</sub> + θ<sub>1</sub> ϵ<sub>t-1</sub> + …+ θ<sub>q</sub> ϵ<sub>t-q</sub></i></p>
+
+<h2 id="estimating-the-armapq-model-hyperparameters">
+<a class="anchor" href="#estimating-the-armapq-model-hyperparameters" aria-hidden="true"><span class="octicon octicon-link"></span></a>Estimating the ARMA(p,q) model hyperparameters</h2>
+
+<p>When selecting the parameters p and q, we must focus on characteristics of the model. Each model have different characteristics for autocorrelation function (ACF) and partial autocorrelation function (PACF). By looking at the ACF and PACF plots, we can identify the numbers of MA and AR terms i.e. q and p respectively.</p>
+
+<h3 id="autocorrelation">
+<a class="anchor" href="#autocorrelation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Autocorrelation</h3>
+<blockquote>
+  <p>The relationship between two variables is summarized by correlation.</p>
+</blockquote>
+
+<p>If the correlation is calculated for the timeseries observations with the observations at previous time steps is called as <strong>Autocorrelation</strong>. The observations of previous timesteps are called as lags. The <strong>ACF plot</strong> is a bar chart of the coefficients of correlation between timeseries and lags of itself.</p>
+
+<h3 id="partial-autocorrelation">
+<a class="anchor" href="#partial-autocorrelation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Partial Autocorrelation</h3>
+<blockquote>
+  <p>The “partial” correlation between two variables is the amount of correlation between them which is not explained by their mutual correlations with a specified set of other variables.</p>
+</blockquote>
+
+<p>If the correlation is calculated for the timeseries observations with the observations at previous time steps at lag k by eliminating all the effects of shorter lags i.e. 1,2,…k-1, then it is called as <strong>Partial Autocorrelation</strong>. The <strong>PACF plot</strong> is a plot of the partial correlation coefficients between the series and lags of itself.</p>
+
+<h2 id="characteristics-of-acf-and-pacf">
+<a class="anchor" href="#characteristics-of-acf-and-pacf" aria-hidden="true"><span class="octicon octicon-link"></span></a>Characteristics of ACF and PACF</h2>
+<p>Now, the models have the following characteristics for the autocorrelation and partial autocorrelation.</p>
+
+<ul>
+  <li>AR(p): When the lag is getting large, The autocorrelation decreases exponentially and the partial autocorrelation cuts-off after lag p.</li>
+  <li>MA(q): When the lag is getting large, the autocorrelation cuts-off after lag q and the partial autocorelation tails off to zero.</li>
+  <li>ARMA(p,q): When the lag is getting large, both autocorrelation and partial autocorrelation tails off to zero.</li>
+</ul>
+
+<p>Using these characteristics, we can estimate the proper model.</p>
+
+<h2 id="stationarity">
+<a class="anchor" href="#stationarity" aria-hidden="true"><span class="octicon octicon-link"></span></a>Stationarity</h2>
+<p>AR, MA and ARMA models require the data to be stationary. A stationary series has a constant mean and variance over time. But in real-world, most of the data is not stationary.</p>
+
+<p>So how to forecast non-stationary series?</p>
+
+<p>Well, here comes the ARIMA model which works with data that is not stationary. The new term added for ARIMA is I.</p>
+
+<h2 id="integrated-i">
+<a class="anchor" href="#integrated-i" aria-hidden="true"><span class="octicon octicon-link"></span></a>Integrated (I)</h2>
+<p>Consider a non-stationary series which needs to be forecasted. We can say whether the data is stationary or not by studying the plot against time.</p>
+
+<p><img src="/blog/images/posts/2020-11-11/1.png" alt="" title="Original time series plot (Non-stationary)"></p>
+
+<p>It is clearly visible that the mean is increasing over time i.e. the series is not stationary. If this upward trend is eliminated, the series becomes stationary. The easiest way to do this is to consoder the differences between consecutive timesteps. It goes as follows:</p>
+
+<p><i>I<sub>t</sub> = Y<sub>t+1</sub> - Y<sub>t</sub></i></p>
+
+<p>After applying this transformation, the series becomes like this with observable linear trend -</p>
+
+<p><img src="/blog/images/posts/2020-11-11/2.png" alt="" title="Differenced time series plot (stationary)"></p>
+
+<p>The transformed series is called as the differenced series. This differenced series is used for forecasting instead of the timeseries. This step of converting non-stationary series to stationary series results in the new term I which stands for Integrated. (Note: This has nothing to with integration).</p>
+
+<p>In the above example, the data becomes stationary after performing the first order differencing which means a single time differencing of observations at consecutive timesteps. But in some cases, the data remains non-stationary after performing the first order differencing. Hence, the series could be differenced more than once to make it stationary.</p>
+
+<p>d = 1 : 
+<i>I<sub>t</sub> = Y<sub>t+1</sub> - Y<sub>t</sub></i></p>
+
+<p>d = 2 : <i>J<sub>t</sub> = I<sub>t+1</sub> - I<sub>t</sub>  =  Y<sub>t+2</sub> + Y<sub>t</sub> - 2Y<sub>t+1</sub></i></p>
+
+<p>Hence, ARIMA has hyperparameters p, q and d:</p>
+<ul>
+  <li>p - order of the AR model</li>
+  <li>q - order of the MA model</li>
+  <li>d - order of differencing</li>
+</ul>
+
+<h2 id="seasonality">
+<a class="anchor" href="#seasonality" aria-hidden="true"><span class="octicon octicon-link"></span></a>Seasonality</h2>
+<p>It is to be noted that ARIMA model assumes that the data is not seasonal. The presence of variations that occur at specific regular intervals, such as weekly or monthly results in seasonality of time series. For example, Arrival of vegetables to the market or sales of Diwali crackers. <strong>ARIMA does not work well for seasonal series</strong>.</p>
+
+<p>There is an upgrade of ARIMA model, called <strong>Seasonal ARIMA</strong> or <strong>SARIMA</strong>. It is represented as ARIMA (p,d,q) X (P,D,Q,m).</p>
+<ul>
+  <li>p - trend AR order</li>
+  <li>q - trend MA order</li>
+  <li>d - trend difference order</li>
+  <li>P - seasonal AR order</li>
+  <li>Q - seasonal MA order</li>
+  <li>D - seasonal difference order</li>
+  <li>m - frequency of seasonality in timeseries</li>
+</ul>
+
+<p>To identify values for the seasonal model, ACF and PACF plots can be analyzed by looking at correlation at seasonal lag time steps i.e. the lag at which seasonality occurs. Alternately, <a href="https://machinelearningmastery.com/how-to-grid-search-sarima-model-hyperparameters-for-time-series-forecasting-in-python/">this post</a> explains how grid searching can be used across the trend and seasonal hyperparameters.</p>
+
+<p>Another easy way to use is to use <a href="http://alkaline-ml.com/pmdarima/">pmdarima</a>’s auto.arima which automatically gives the best fit model.</p>
+
+<h2 id="further-reading">
+<a class="anchor" href="#further-reading" aria-hidden="true"><span class="octicon octicon-link"></span></a>Further Reading</h2>
+<ul>
+  <li><a href="https://www.aptech.com/blog/introduction-to-the-fundamentals-of-time-series-data-and-analysis/">Fundamentals of Time series Data and Analysis</a></li>
+  <li><a href="http://people.duke.edu/~rnau/411arim.htm">ARIMA models for time series forecasting</a></li>
+  <li><a href="http://people.duke.edu/~rnau/arimrule.htm">Summary of rules for identifying ARIMA models</a></li>
+  <li><a href="http://people.duke.edu/~rnau/Notes_on_nonseasonal_ARIMA_models--Robert_Nau.pdf">Notes on nonseasonal ARIMA models</a></li>
+  <li><a href="https://otexts.com/fpp2/arima-r.html">How does auto.arima() work?</a></li>
+</ul>
+
+<h2 id="credits">
+<a class="anchor" href="#credits" aria-hidden="true"><span class="octicon octicon-link"></span></a>Credits</h2>
+<p>Thanks for reading! And please feel free to connect to me via <a href="https://twitter.com/jithendrabsy">twitter</a> or <a href="https://www.linkedin.com/in/jithendrabsy/">linkedin</a>. Feedback is always welcome.</p>
+
+  </div><a class="u-url" href="/blog/2020/11/11/Understanding-ARIMA.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>A place where I scribble down my thoughts and notes for my future self to look back and review the material.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/jithendrabsy" title="jithendrabsy"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/jithendrabsy" title="jithendrabsy"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/jithendrabsy" title="jithendrabsy"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
