@@ -425,6 +425,10 @@ pre code { font-size: 15px !important; }
 /*----- ADD YOUR STYLES BELOW -------*/
 body { background-color: white; }
 
-.post-content p, .post-content li { color: #1f1f1f; }
+.post-content p, .post-content li { font-size: 16px; color: #515151; }
+
+p { margin-top: 1rem !important; margin-bottom: 1rem !important; }
+
+p code { font-size: 85%; }
 
 /*# sourceMappingURL=style.css.map */
