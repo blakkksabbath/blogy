@@ -10,15 +10,15 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Introducing time series for beginners" />
 <meta property="og:description" content="Introducing time series for beginners" />
-<link rel="canonical" href="https://blaksab.github.io/blogy/datascience/timeseries/2020/11/11/ts-arima.html" />
-<meta property="og:url" content="https://blaksab.github.io/blogy/datascience/timeseries/2020/11/11/ts-arima.html" />
+<link rel="canonical" href="https://blaksab.github.io/blogys/datascience/timeseries/2020/11/11/ts-arima.html" />
+<meta property="og:url" content="https://blaksab.github.io/blogys/datascience/timeseries/2020/11/11/ts-arima.html" />
 <meta property="og:site_name" content="Jithendra’s blog" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-11-11T00:00:00-06:00" />
 <script type="application/ld+json">
-{"url":"https://blaksab.github.io/blogy/datascience/timeseries/2020/11/11/ts-arima.html","@type":"BlogPosting","headline":"Understanding Time Series and ARIMA","dateModified":"2020-11-11T00:00:00-06:00","datePublished":"2020-11-11T00:00:00-06:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://blaksab.github.io/blogy/datascience/timeseries/2020/11/11/ts-arima.html"},"description":"Introducing time series for beginners","@context":"https://schema.org"}</script>
+{"url":"https://blaksab.github.io/blogys/datascience/timeseries/2020/11/11/ts-arima.html","@type":"BlogPosting","headline":"Understanding Time Series and ARIMA","dateModified":"2020-11-11T00:00:00-06:00","datePublished":"2020-11-11T00:00:00-06:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://blaksab.github.io/blogys/datascience/timeseries/2020/11/11/ts-arima.html"},"description":"Introducing time series for beginners","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
-<link rel="stylesheet" href="/blogy/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://blaksab.github.io/blogy/feed.xml" title="Jithendra's blog" /><link rel="shortcut icon" type="image/x-icon" href="/blogy/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="/blogys/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://blaksab.github.io/blogys/feed.xml" title="Jithendra's blog" /><link rel="shortcut icon" type="image/x-icon" href="/blogys/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
@@ -69,7 +69,7 @@ window.onload = wrap_img;
 </head>
 <body><header class="site-header">
 
-  <div class="wrapper"><a class="site-title" rel="author" href="/blogy/">Jithendra&#39;s blog</a><nav class="site-nav">
+  <div class="wrapper"><a class="site-title" rel="author" href="/blogys/">Jithendra&#39;s blog</a><nav class="site-nav">
         <input type="checkbox" id="nav-trigger" class="nav-trigger" />
         <label for="nav-trigger">
           <span class="menu-icon">
@@ -79,7 +79,7 @@ window.onload = wrap_img;
           </span>
         </label>
 
-        <div class="trigger"><a class="page-link" href="/blogy/about/">About Me</a><a class="page-link" href="/blogy/search/">Search</a><a class="page-link" href="/blogy/categories/">Tags</a></div>
+        <div class="trigger"><a class="page-link" href="/blogys/about/">About Me</a><a class="page-link" href="/blogys/search/">Search</a><a class="page-link" href="/blogys/categories/">Tags</a></div>
       </nav></div>
 </header>
 <main class="page-content" aria-label="Content">
@@ -100,10 +100,10 @@ window.onload = wrap_img;
     
       <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
       
-        <a class="category-tags-link" href="/blogy/categories/#datascience">datascience</a>
+        <a class="category-tags-link" href="/blogys/categories/#datascience">datascience</a>
         &nbsp;
       
-        <a class="category-tags-link" href="/blogy/categories/#timeseries">timeseries</a>
+        <a class="category-tags-link" href="/blogys/categories/#timeseries">timeseries</a>
         
       
       </p>
@@ -122,7 +122,7 @@ if we can try to find a relationship between such independent variables and the 
 <p>The <strong>time series analysis</strong> is frequently used in such cases. The fundamental intuition behind time series forecasting is that, the measure of some variable 
 at a time period will depend on the measure of the same variable at previous time periods. Therefore, we analyze the series on the series itself. If you are walking the path of becoming a data scientist, you might have already come across the term Time Series and you might have also realized the importance of Time Series Analysis and Forecating. In this post, I will try to give a gentle introduction so that it can kickstart your learning.</p>
 
-<p><img src="/blogy/images/posts/2020-9-14/tss.png" alt="" title="time-series-plot" /></p>
+<p><img src="/blogys/images/posts/2020-9-14/tss.png" alt="" title="time-series-plot" /></p>
 
 <h2 id="what-is-timeseries">What is Time series?</h2>
 
@@ -148,7 +148,7 @@ at a time period will depend on the measure of the same variable at previous tim
 
 <p>Analyzing such time series helps to understand the patterns such as trend, seasonality,cyclicality and irregularity. <strong>Trend</strong> is a general direction the data is changing as time passes. <strong>Seasonality</strong> is when a pattern recurs over fixed regular time intervals. <strong>Cyclicality</strong> is when there are any fluctuations around the trend. Unlike seasonality, cyclicality may vary in length. <strong>Irregularity</strong> is when there are random fluctuations which are not systematic and are irregular. These fluctuations cannot be controlled. These are called as time series components.</p>
 
-<p><img src="/blogy/images/posts/2020-9-14/comps.jpg" alt="" title="Time series components(https://slideplayer.com/slide/8134442/)" /></p>
+<p><img src="/blogys/images/posts/2020-9-14/comps.jpg" alt="" title="Time series components(https://slideplayer.com/slide/8134442/)" /></p>
 
 <p>Most of the forecasting methods assume that the data is stationary because it is easy to predict the stationary data. Therfore, it is important to convert non-stationary data to stationary in order to apply forecasting models.</p>
 
@@ -180,7 +180,7 @@ at a time period will depend on the measure of the same variable at previous tim
 <span class="n">df</span><span class="p">.</span><span class="n">plot</span><span class="p">()</span>
 <span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div></div>
-<p><img src="/blogy/images/posts/2020-9-14/plot.png" alt="" title="data source(https://rb.gy/ehaaxw)" /></p>
+<p><img src="/blogys/images/posts/2020-9-14/plot.png" alt="" title="data source(https://rb.gy/ehaaxw)" /></p>
 
 <p>Since the variations are very complex, we cannot see all the components clearly. Now, Decomposing this will give us clear picture of the components. Let’s look how we can decompose this using <strong>seasonal_decompose()</strong> function:</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">statsmodels.tsa.seasonal</span> <span class="kn">import</span> <span class="n">seasonal_decompose</span>
@@ -188,7 +188,7 @@ at a time period will depend on the measure of the same variable at previous tim
 <span class="n">components</span><span class="p">.</span><span class="n">plot</span><span class="p">()</span>
 <span class="n">pyplot</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div></div>
-<p><img src="/blogy/images/posts/2020-9-14/dec.png" alt="" /></p>
+<p><img src="/blogys/images/posts/2020-9-14/dec.png" alt="" /></p>
 
 <p>Now you can see all the components, you can analyze them and remove any of them them if not needed. For example, if you want to analyze the trend of a stock data, you would need to remove the seasonality found in the data and the noise due to irregularity.</p>
 
@@ -273,7 +273,7 @@ at a time period will depend on the measure of the same variable at previous tim
 <h2 id="integrated-i">Integrated (I)</h2>
 <p>Consider a non-stationary series which needs to be forecasted. We can say whether the data is stationary or not by studying the plot against time.</p>
 
-<p><img src="/blogy/images/posts/2020-11-11/1.png" alt="" title="Original time series plot (Non-stationary)" /></p>
+<p><img src="/blogys/images/posts/2020-11-11/1.png" alt="" title="Original time series plot (Non-stationary)" /></p>
 
 <p>It is clearly visible that the mean is increasing over time i.e. the series is not stationary. If this upward trend is eliminated, the series becomes stationary. The easiest way to do this is to consoder the differences between consecutive timesteps. It goes as follows:</p>
 
@@ -281,7 +281,7 @@ at a time period will depend on the measure of the same variable at previous tim
 
 <p>After applying this transformation, the series becomes like this with observable linear trend -</p>
 
-<p><img src="/blogy/images/posts/2020-11-11/2.png" alt="" title="Differenced time series plot (stationary)" /></p>
+<p><img src="/blogys/images/posts/2020-11-11/2.png" alt="" title="Differenced time series plot (stationary)" /></p>
 
 <p>The transformed series is called as the differenced series. This differenced series is used for forecasting instead of the timeseries. This step of converting non-stationary series to stationary series results in the new term I which stands for Integrated. (Note: This has nothing to with integration).</p>
 
@@ -328,20 +328,20 @@ at a time period will depend on the measure of the same variable at previous tim
 <h2 id="credits">Credits</h2>
 <p>Thanks for reading! And please feel free to connect to me via <a href="https://twitter.com/jithendrabsy">twitter</a> or <a href="https://www.linkedin.com/in/jithendrabsy/">linkedin</a>. Feedback is always welcome.</p>
 
-  </div><a class="u-url" href="/blogy/datascience/timeseries/2020/11/11/ts-arima.html" hidden></a>
+  </div><a class="u-url" href="/blogys/datascience/timeseries/2020/11/11/ts-arima.html" hidden></a>
 </article>
       </div>
     </main><footer class="site-footer h-card">
-  <data class="u-url" href="/blogy/"></data>
+  <data class="u-url" href="/blogys/"></data>
 
   <div class="wrapper">
 
     <div class="footer-col-wrapper">
       <div class="footer-col">
         <p class="feed-subscribe">
-          <a href="/blogy/feed.xml">
+          <a href="/blogys/feed.xml">
             <svg class="svg-icon orange">
-              <use xlink:href="/blogy/assets/minima-social-icons.svg#rss"></use>
+              <use xlink:href="/blogys/assets/minima-social-icons.svg#rss"></use>
             </svg><span>Subscribe</span>
           </a>
         </p>
@@ -351,7 +351,7 @@ at a time period will depend on the measure of the same variable at previous tim
       </div>
     </div>
 
-    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/jithendrabsy" title="jithendrabsy"><svg class="svg-icon grey"><use xlink:href="/blogy/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/jithendrabsy" title="jithendrabsy"><svg class="svg-icon grey"><use xlink:href="/blogy/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/jithendrabsy" title="jithendrabsy"><svg class="svg-icon grey"><use xlink:href="/blogy/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/jithendrabsy" title="jithendrabsy"><svg class="svg-icon grey"><use xlink:href="/blogys/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/jithendrabsy" title="jithendrabsy"><svg class="svg-icon grey"><use xlink:href="/blogys/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/jithendrabsy" title="jithendrabsy"><svg class="svg-icon grey"><use xlink:href="/blogys/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
 </div>
 
   </div>
